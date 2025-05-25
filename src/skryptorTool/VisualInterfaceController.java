@@ -1,7 +1,5 @@
 package skryptorTool;
 
-import crypto.AES;
-import crypto.CryptoData;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.event.ActionEvent;
@@ -10,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Base64;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import crypto.*;
@@ -24,7 +21,7 @@ public class VisualInterfaceController {
 	private Cryptography currentCryptoAlgorithm;
 
 	@FXML
-	private ComboBox cryptoAlgorithm_ComboBox;
+	private ComboBox<String> cryptoAlgorithm_ComboBox;
 	@FXML
 	private Button loadFileKey_Button;
 	@FXML
@@ -61,7 +58,7 @@ public class VisualInterfaceController {
 		try {
 			cipherBytes = currentCryptoAlgorithm.encrypt(new CryptoData(plainTextBytes, encryptionKey), Cryptography.CryptoMode.CBC);
 		} catch (GeneralSecurityException e) {
-			ShowErrorMessage(e.getMessage());
+			showErrorMessage(e.getMessage());
 			return;
 		}
 
@@ -70,6 +67,9 @@ public class VisualInterfaceController {
 
 	@FXML
 	public void decryptText(ActionEvent event) {
+		if (cryptoAlgorithm_ComboBox.getValue() == null)
+			return;
+
 		currentCryptoAlgorithm = cryptographyMap.get(cryptoAlgorithm_ComboBox.getValue());
 
 		byte[] cipherBytes = Base64.getDecoder().decode(cipherText_TextArea.getText());
@@ -83,7 +83,7 @@ public class VisualInterfaceController {
 		try {
 			plainBytes = currentCryptoAlgorithm.decrypt(new CryptoData(cipherBytes, decryptionKey), Cryptography.CryptoMode.CBC);
 		} catch (GeneralSecurityException e) {
-			ShowErrorMessage(e.getMessage());
+			showErrorMessage(e.getMessage());
 			return;
 		}
 
@@ -93,7 +93,7 @@ public class VisualInterfaceController {
 	public void initialize() {
 		cryptoAlgorithm_ComboBox.getItems().addAll(cryptographyMap.keySet());
 	}
-	public void ShowErrorMessage(String message) {
+	public void showErrorMessage(String message) {
 		System.out.println(message);
 		Alert alert = new Alert(Alert.AlertType.ERROR);
 		alert.setTitle("Erro!");
