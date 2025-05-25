@@ -47,7 +47,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane prefHeight="631.0" prefWidth="823.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane prefHeight="631.0" prefWidth="823.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="skryptorTool.VisualInterfaceController">
    <children>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -55,12 +55,12 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="691.0" prefWidth="1276.0">
                      <children>
-                        <VBox layoutX="14.0" layoutY="29.0" prefHeight="143.0" prefWidth="790.0">
+                        <VBox layoutX="14.0" layoutY="29.0" prefHeight="90.0" prefWidth="790.0">
                            <children>
-                              <ComboBox prefHeight="25.0" prefWidth="187.0" promptText="Algorítmo" />
-                              <HBox prefHeight="44.0" prefWidth="798.0">
+                              <ComboBox fx:id="cryptoAlgorithm_ComboBox" prefHeight="25.0" prefWidth="187.0" promptText="Algorítmo" visibleRowCount="5" />
+                              <HBox alignment="CENTER_LEFT" prefHeight="44.0" prefWidth="798.0">
                                  <children>
-                                    <Button mnemonicParsing="false" prefWidth="40.0" text="📁">
+                                    <Button fx:id="loadFileKey_Button" mnemonicParsing="false" prefHeight="25.0" prefWidth="29.0" text="📁">
                                        <tooltip>
                                           <Tooltip text="Usar arquivo como chave secreta.">
                                              <font>
@@ -69,7 +69,19 @@
                                           </Tooltip>
                                        </tooltip>
                                     </Button>
-                                    <TextField maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="763.0" promptText="Chave Secreta">
+                                    <Button fx:id="genRandomKey_Button" layoutX="10.0" layoutY="20.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" text="R" textAlignment="CENTER" underline="true">
+                                       <tooltip>
+                                          <Tooltip text="Usar arquivo como chave secreta.">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Tooltip>
+                                       </tooltip>
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <TextField fx:id="secretKey_TextField" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="704.0" promptText="Chave Secreta">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
@@ -79,24 +91,28 @@
                                     <Insets top="10.0" />
                                  </padding>
                               </HBox>
-                              <Label alignment="TOP_LEFT" prefHeight="67.0" prefWidth="790.0" textFill="RED">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
                            </children>
                         </VBox>
-                        <HBox alignment="CENTER" layoutX="17.0" layoutY="172.0" prefHeight="100.0" prefWidth="200.0" spacing="28.0">
+                        <HBox alignment="CENTER" layoutX="-8.0" layoutY="131.0" prefHeight="471.0" prefWidth="835.0" spacing="28.0">
                            <children>
-                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="427.0" prefWidth="361.0">
+                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="427.0" prefWidth="380.0">
                                  <children>
-                                    <Button mnemonicParsing="false" prefHeight="28.0" prefWidth="116.0" text="Criptografar" />
+                                    <HBox alignment="CENTER_LEFT" prefHeight="29.0" prefWidth="380.0">
+                                       <children>
+                                          <Button fx:id="encryptButton" mnemonicParsing="false" onAction="#encryptText" prefHeight="28.0" prefWidth="116.0" text="Criptografar" />
+                                          <Button fx:id="loadFileToEncrypt_Button" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="📁" textAlignment="CENTER">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                       </children>
+                                    </HBox>
                                     <Label text="Texto simples">
                                        <VBox.margin>
                                           <Insets top="10.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <TextArea prefHeight="348.0" prefWidth="361.0">
+                                    <TextArea fx:id="plainText_TextArea" prefHeight="348.0" prefWidth="361.0" wrapText="true">
                                        <opaqueInsets>
                                           <Insets top="20.0" />
                                        </opaqueInsets>
@@ -109,13 +125,22 @@
                               <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="42.0" prefWidth="11.0" text="→←" wrapText="true" />
                               <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="427.0" prefWidth="361.0">
                                  <children>
-                                    <Button mnemonicParsing="false" prefHeight="28.0" prefWidth="116.0" text="Descriptografar" />
+                                    <HBox alignment="CENTER_LEFT" prefHeight="29.0" prefWidth="380.0">
+                                       <children>
+                                          <Button fx:id="decryptButton" mnemonicParsing="false" onAction="#decryptText" prefHeight="28.0" prefWidth="116.0" text="Descriptografar" />
+                                          <Button fx:id="loadFileToDecrypt_Button" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="📁" textAlignment="CENTER">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                       </children>
+                                    </HBox>
                                     <Label text="Texto cifrado">
                                        <VBox.margin>
                                           <Insets top="10.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <TextArea prefHeight="348.0" prefWidth="361.0">
+                                    <TextArea fx:id="cipherText_TextArea" prefHeight="348.0" prefWidth="361.0" wrapText="true">
                                        <opaqueInsets>
                                           <Insets top="20.0" />
                                        </opaqueInsets>
