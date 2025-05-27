@@ -1,5 +1,10 @@
 package crypto;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.NoSuchAlgorithmException;
+
 public class DES implements Cryptography {
 	@Override
 	public byte[] encrypt(CryptoData cryptoData, CryptoMode mode) {
@@ -13,6 +18,13 @@ public class DES implements Cryptography {
 	}
 	@Override
 	public int getKeySize() {
-		return 32;
+		return 56;
+	}
+
+	@Override
+	public SecretKey getRandomSecretKey() throws NoSuchAlgorithmException {
+		KeyGenerator keyGen = KeyGenerator.getInstance("DES");
+		keyGen.init(getKeySize());
+		return keyGen.generateKey();
 	}
 }

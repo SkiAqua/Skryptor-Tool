@@ -53,11 +53,11 @@
         <tabs>
           <Tab text="Criptografia">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="691.0" prefWidth="1276.0">
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="575.0" prefWidth="823.0">
                      <children>
                         <VBox layoutX="14.0" layoutY="29.0" prefHeight="90.0" prefWidth="790.0">
                            <children>
-                              <ComboBox fx:id="cryptoAlgorithm_ComboBox" prefHeight="25.0" prefWidth="187.0" promptText="Algorítmo" visibleRowCount="5" />
+                              <ComboBox fx:id="cryptoAlgorithm_ComboBox" onAction="#updateCurrentCryptographyAlgorithm" prefHeight="25.0" prefWidth="187.0" promptText="Algorítmo" visibleRowCount="5" />
                               <HBox alignment="CENTER_LEFT" prefHeight="44.0" prefWidth="798.0">
                                  <children>
                                     <Button fx:id="loadFileKey_Button" mnemonicParsing="false" prefHeight="25.0" prefWidth="29.0" text="📁">
@@ -69,9 +69,9 @@
                                           </Tooltip>
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="genRandomKey_Button" layoutX="10.0" layoutY="20.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" text="R" textAlignment="CENTER" underline="true">
+                                    <Button fx:id="genRandomKey_Button" layoutX="10.0" layoutY="20.0" mnemonicParsing="false" onAction="#generateRandomKey" prefHeight="25.0" prefWidth="25.0" text="R" textAlignment="CENTER" underline="true">
                                        <tooltip>
-                                          <Tooltip text="Usar arquivo como chave secreta.">
+                                          <Tooltip text="Gerar chave aleatória.">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -93,7 +93,7 @@
                               </HBox>
                            </children>
                         </VBox>
-                        <HBox alignment="CENTER" layoutX="-8.0" layoutY="131.0" prefHeight="471.0" prefWidth="835.0" spacing="28.0">
+                        <HBox alignment="CENTER" layoutX="-6.0" layoutY="131.0" prefHeight="405.0" prefWidth="835.0" spacing="12.0">
                            <children>
                               <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="427.0" prefWidth="380.0">
                                  <children>
@@ -104,6 +104,9 @@
                                              <HBox.margin>
                                                 <Insets left="10.0" />
                                              </HBox.margin>
+                                             <tooltip>
+                                                <Tooltip text="Carregar um Arquivo" />
+                                             </tooltip>
                                           </Button>
                                        </children>
                                     </HBox>
@@ -122,7 +125,7 @@
                                     </TextArea>
                                  </children>
                               </VBox>
-                              <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="42.0" prefWidth="11.0" text="→←" wrapText="true" />
+                              <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#switchText" prefHeight="42.0" prefWidth="11.0" text="→←" wrapText="true" />
                               <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="427.0" prefWidth="361.0">
                                  <children>
                                     <HBox alignment="CENTER_LEFT" prefHeight="29.0" prefWidth="380.0">
@@ -132,6 +135,9 @@
                                              <HBox.margin>
                                                 <Insets left="10.0" />
                                              </HBox.margin>
+                                             <tooltip>
+                                                <Tooltip text="Carregar um arquivo." />
+                                             </tooltip>
                                           </Button>
                                        </children>
                                     </HBox>
@@ -152,6 +158,7 @@
                               </VBox>
                            </children>
                         </HBox>
+                        <Button fx:id="information_Button" layoutX="770.0" layoutY="558.0" mnemonicParsing="false" onAction="#showInformationMessage" prefHeight="29.0" prefWidth="28.0" text="❓" textAlignment="CENTER" />
                      </children>
                   </AnchorPane>
             </content>

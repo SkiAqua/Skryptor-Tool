@@ -1,6 +1,8 @@
 package crypto;
 
 import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.SecretKey;
 
 public interface Cryptography {
     public static enum CryptoMode {
@@ -18,4 +20,6 @@ public interface Cryptography {
     byte[] decrypt(CryptoData cryptoData, CryptoMode mode) throws GeneralSecurityException;
 
     int getKeySize();
+
+    SecretKey getRandomSecretKey() throws NoSuchAlgorithmException;
 }

@@ -1,10 +1,12 @@
 package crypto;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.GeneralSecurityException;
-import java.util.Base64;
+import java.security.NoSuchAlgorithmException;
 
 public class AES implements Cryptography {
     @Override
@@ -57,5 +59,12 @@ public class AES implements Cryptography {
     @Override
     public int getKeySize() {
         return 128;
+    }
+
+    @Override
+    public SecretKey getRandomSecretKey() throws NoSuchAlgorithmException {
+		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+        keyGen.init(getKeySize());
+        return keyGen.generateKey();
     }
 }
