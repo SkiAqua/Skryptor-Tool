@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.SecretKey;
 
 public interface Cryptography {
-    public static enum CryptoMode {
+    enum CryptoMode {
         ECB,
         CBC,
         CFB,

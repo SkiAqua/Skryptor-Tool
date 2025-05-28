@@ -25,8 +25,7 @@ public class CryptoData {
         byte[] derivedKey;
 
         if (keySize <= 32) {
-            MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
-            byte[] shaDigest = sha256.digest(cryptoKey);
+            byte[] shaDigest = HashAlgorithm.sha256(cryptoKey);
             derivedKey = Arrays.copyOf(shaDigest, keySize);
         } else {
             throw new UnsupportedOperationException("Value must be under 32 bytes.");

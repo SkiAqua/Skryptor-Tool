@@ -3,17 +3,19 @@ package skryptorTool;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.event.ActionEvent;
-
+import javafx.stage.FileChooser;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
+import java.io.File;
 import crypto.*;
 
 import javax.crypto.spec.IvParameterSpec;
@@ -21,7 +23,7 @@ import javax.crypto.spec.IvParameterSpec;
 public class VisualInterfaceController {
 	// Crypto Tab
 
-	private byte[] keyBytes = new byte[256];
+	private byte[] keyBytes;
 
 	Map<String, Cryptography> cryptographyMap = Map.ofEntries(
 			Map.entry("AES-256", new AES256()),
@@ -53,6 +55,40 @@ public class VisualInterfaceController {
 
 	// Authentication Tab
 
+	@FXML
+	public void loadFileAsKey(ActionEvent event) {
+		if (keyBytes != null) {
+			keyBytes = null;
+			loadFileKey_Button.setText("\uD83D\uDCC1");
+			secretKey_TextField.setText("");
+			secretKey_TextField.setDisable(false);
+		} else {
+			FileChooser keyFileChooser = new FileChooser();
+			keyFileChooser.setTitle("Selecione um arquivo");
+
+			File f = keyFileChooser.showOpenDialog(null);
+
+			if (f == null)
+				return;
+
+			try {
+				keyBytes = Files.readAllBytes(f.toPath());
+				keyBytes = HashAlgorithm.sha256(keyBytes);
+			} catch (IOException e) {
+				showErrorMessage("Erro ao ler o arquivo!");
+				return;
+			} catch (NoSuchAlgorithmException e) {
+				showErrorMessage("Erro ao gerar hash!");
+				return;
+			}
+
+
+			secretKey_TextField.setText(f.getAbsolutePath());
+
+			loadFileKey_Button.setText("❌");
+			secretKey_TextField.setDisable(true);
+		}
+	}
 	@FXML
 	public void encryptText(ActionEvent event) throws UnsupportedEncodingException, IOException {
 		// Check if the encryption algorithm is not null

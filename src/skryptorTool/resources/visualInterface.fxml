@@ -60,7 +60,7 @@
                               <ComboBox fx:id="cryptoAlgorithm_ComboBox" onAction="#updateCurrentCryptographyAlgorithm" prefHeight="25.0" prefWidth="187.0" promptText="Algorítmo" visibleRowCount="5" />
                               <HBox alignment="CENTER_LEFT" prefHeight="44.0" prefWidth="798.0">
                                  <children>
-                                    <Button fx:id="loadFileKey_Button" mnemonicParsing="false" prefHeight="25.0" prefWidth="29.0" text="📁">
+                                    <Button fx:id="loadFileKey_Button" mnemonicParsing="false" onAction="#loadFileAsKey" prefHeight="25.0" prefWidth="29.0" text="📁">
                                        <tooltip>
                                           <Tooltip text="Usar arquivo como chave secreta.">
                                              <font>

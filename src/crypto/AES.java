@@ -12,7 +12,7 @@ public class AES implements Cryptography {
     @Override
     public byte[] encrypt(CryptoData cryptoData, CryptoMode mode) throws GeneralSecurityException {
         Cipher encryptCipher;
-        IvParameterSpec iv = null;
+        IvParameterSpec iv;
 
         switch (mode) {
             case ECB:
