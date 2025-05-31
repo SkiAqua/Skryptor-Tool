@@ -4,9 +4,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class HashAlgorithm {
-	public static byte[] sha256(byte[] input) throws NoSuchAlgorithmException {
-		MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
-		return sha256.digest(input);
+	public static byte[] sha256(byte[] input) {
+		try {
+			return MessageDigest.getInstance("SHA-256").digest(input);
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static byte[] genericMessageDigest(byte[] input, String algorithm) throws NoSuchAlgorithmException {
