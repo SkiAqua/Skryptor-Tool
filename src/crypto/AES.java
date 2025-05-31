@@ -1,57 +1,70 @@
 package crypto;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
+import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 public class AES implements Cryptography {
     @Override
-    public byte[] encrypt(CryptoData cryptoData, CryptoMode mode) throws GeneralSecurityException {
+    public byte[] encrypt(CryptoData cryptoData, CryptoMode mode) throws NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher encryptCipher;
         IvParameterSpec iv;
 
         switch (mode) {
             case ECB:
-                encryptCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-                encryptCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cryptoData.getDerivedKey(16), "AES"));
+                try {
+                    encryptCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                    encryptCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cryptoData.cryptoKey, "AES"));
+                } catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             case CBC:
-                encryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-                iv = cryptoData.Iv;
-                encryptCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cryptoData.getDerivedKey(16), "AES"), iv);
+                try {
+                    encryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+                    iv = cryptoData.Iv;
+                    encryptCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cryptoData.cryptoKey, "AES"), iv);
+                } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             default:
-                throw new GeneralSecurityException("Unsupported encryption mode");
+                throw new UnsupportedOperationException("Unsupported encryption mode");
         }
 
         return encryptCipher.doFinal(cryptoData.data);
     }
 
     @Override
-    public byte[] decrypt(CryptoData cryptoData, CryptoMode mode) throws GeneralSecurityException {
+    public byte[] decrypt(CryptoData cryptoData, CryptoMode mode) throws NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher decryptCipher;
         IvParameterSpec iv = null;
 
         switch (mode) {
             case CryptoMode.ECB:
-                decryptCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                try {
+                    decryptCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                    decryptCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(cryptoData.cryptoKey, "AES"));
+                } catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             case CryptoMode.CBC:
-                decryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-                iv = cryptoData.Iv;
+                try {
+                    decryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+                    iv = cryptoData.Iv;
+                    decryptCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(cryptoData.cryptoKey, "AES"), iv);
+                } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             default:
-                throw new GeneralSecurityException("Unsupported encryption mode");
+                throw new UnsupportedOperationException("Unsupported decryption mode");
         }
-
-        if (iv == null)
-            decryptCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(cryptoData.getDerivedKey(16), "AES"));
-        else
-            decryptCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(cryptoData.getDerivedKey(16), "AES"), iv);
 
         return decryptCipher.doFinal(cryptoData.data);
     }
