@@ -1,7 +1,6 @@
 package crypto;
 
 import javax.crypto.spec.IvParameterSpec;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -24,10 +23,10 @@ public class CryptoData {
     public byte[] getDerivedKey(int keySize) {
         if (keySize < 16 || keySize > 32)
             throw new IllegalArgumentException("Value must be between 16 and 32 bytes.");
-
         try {
             byte[] shaDigest = HashAlgorithm.sha256(cryptoKey);
             return Arrays.copyOf(shaDigest, keySize);
+
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
