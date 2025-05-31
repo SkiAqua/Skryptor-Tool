@@ -7,9 +7,9 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 
 public class CryptoData {
-    public byte[] data;
-    public byte[] cryptoKey;
-    public IvParameterSpec Iv;
+    public final byte[] data;
+    public final byte[] cryptoKey;
+    public final IvParameterSpec Iv;
 
     public CryptoData(byte[] newData, byte[] newCryptoKey, IvParameterSpec newIV) {
         data = newData;
@@ -21,17 +21,16 @@ public class CryptoData {
         this(newData, newCryptoKey, getRandomIvSpec());
     }
 
-    public byte[] getDerivedKey(int keySize) throws UnsupportedOperationException, NoSuchAlgorithmException {
-        byte[] derivedKey;
+    public byte[] getDerivedKey(int keySize) {
+        if (keySize < 16 || keySize > 32)
+            throw new IllegalArgumentException("Value must be between 16 and 32 bytes.");
 
-        if (keySize <= 32) {
+        try {
             byte[] shaDigest = HashAlgorithm.sha256(cryptoKey);
-            derivedKey = Arrays.copyOf(shaDigest, keySize);
-        } else {
-            throw new UnsupportedOperationException("Value must be under 32 bytes.");
+            return Arrays.copyOf(shaDigest, keySize);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         }
-
-        return derivedKey;
     }
 
     public static IvParameterSpec getRandomIvSpec() {
