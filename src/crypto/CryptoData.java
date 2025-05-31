@@ -23,13 +23,11 @@ public class CryptoData {
     public byte[] getDerivedKey(int keySize) {
         if (keySize < 16 || keySize > 32)
             throw new IllegalArgumentException("Value must be between 16 and 32 bytes.");
-        try {
-            byte[] shaDigest = HashAlgorithm.sha256(cryptoKey);
-            return Arrays.copyOf(shaDigest, keySize);
 
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        byte[] shaDigest = HashAlgorithm.sha256(cryptoKey);
+        return Arrays.copyOf(shaDigest, keySize);
+
+
     }
 
     public static IvParameterSpec getRandomIvSpec() {
