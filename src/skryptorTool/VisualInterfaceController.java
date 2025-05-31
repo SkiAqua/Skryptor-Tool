@@ -1,5 +1,7 @@
 package skryptorTool;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.event.ActionEvent;
@@ -55,7 +57,10 @@ public class VisualInterfaceController {
 	private TextArea cipherText_TextArea;
 
 	// Hash Tab
+	@FXML
+	private ComboBox<String> hashAlgorithm_ComboBox;
 
+	private ObservableList<String> hashAlgorithms = FXCollections.observableArrayList("SHA-1", "MD5", "SHA-256", "SHA-384", "SHA-512");
 	// Authentication Tab
 
 	@FXML
@@ -298,6 +303,7 @@ public class VisualInterfaceController {
 	}
 	public void initialize() {
 		cryptoAlgorithm_ComboBox.getItems().addAll(cryptographyMap.keySet());
+		hashAlgorithm_ComboBox.getItems().addAll(hashAlgorithms);
 	}
 	public File getAnyFile() {
 		FileChooser fileChooser = new FileChooser();
