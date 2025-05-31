@@ -100,7 +100,7 @@
                                     <HBox alignment="CENTER_LEFT" prefHeight="29.0" prefWidth="380.0">
                                        <children>
                                           <Button fx:id="encryptButton" mnemonicParsing="false" onAction="#encryptText" prefHeight="28.0" prefWidth="116.0" text="Criptografar" />
-                                          <Button fx:id="loadFileToEncrypt_Button" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="📁" textAlignment="CENTER">
+                                          <Button fx:id="loadFileToEncrypt_Button" mnemonicParsing="false" onAction="#loadFileAndEncrypt" prefHeight="25.0" prefWidth="30.0" text="📁" textAlignment="CENTER">
                                              <HBox.margin>
                                                 <Insets left="10.0" />
                                              </HBox.margin>
@@ -131,7 +131,7 @@
                                     <HBox alignment="CENTER_LEFT" prefHeight="29.0" prefWidth="380.0">
                                        <children>
                                           <Button fx:id="decryptButton" mnemonicParsing="false" onAction="#decryptText" prefHeight="28.0" prefWidth="116.0" text="Descriptografar" />
-                                          <Button fx:id="loadFileToDecrypt_Button" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="📁" textAlignment="CENTER">
+                                          <Button fx:id="loadFileToDecrypt_Button" mnemonicParsing="false" onAction="#loadFileAndDecrypt" prefHeight="25.0" prefWidth="30.0" text="📁" textAlignment="CENTER">
                                              <HBox.margin>
                                                 <Insets left="10.0" />
                                              </HBox.margin>

@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -62,11 +65,10 @@ public class VisualInterfaceController {
 			loadFileKey_Button.setText("\uD83D\uDCC1");
 			secretKey_TextField.setText("");
 			secretKey_TextField.setDisable(false);
+			genRandomKey_Button.setDisable(false);
 		} else {
-			FileChooser keyFileChooser = new FileChooser();
-			keyFileChooser.setTitle("Selecione um arquivo");
 
-			File f = keyFileChooser.showOpenDialog(null);
+			File f = getAnyFile();
 
 			if (f == null)
 				return;
@@ -87,7 +89,99 @@ public class VisualInterfaceController {
 
 			loadFileKey_Button.setText("❌");
 			secretKey_TextField.setDisable(true);
+			genRandomKey_Button.setDisable(true);
 		}
+	}
+	@FXML
+	public void loadFileAndEncrypt(ActionEvent event) {
+		if (cryptoAlgorithm_ComboBox.getValue() == null)
+			return;
+
+		File f = getAnyFile();
+
+		if (f == null)
+			return;
+
+		byte[] fileBytes;
+		byte[] cipherBytes;
+		byte[] encryptionKey;
+
+		encryptionKey = (keyBytes != null) ? Arrays.copyOf(keyBytes, keyBytes.length) : secretKey_TextField.getText().getBytes(StandardCharsets.UTF_8);
+
+		try {
+			fileBytes = Files.readAllBytes(f.toPath());
+		} catch (IOException e) {
+			showErrorMessage("Erro ao ler o arquivo!");
+			return;
+		}
+
+		CryptoData cryptoData = new CryptoData(fileBytes, encryptionKey);
+
+		try {
+			cipherBytes = currentCryptoAlgorithm.encrypt(cryptoData, Cryptography.CryptoMode.CBC);
+		} catch (GeneralSecurityException e) {
+			showErrorMessage(e.getMessage());
+			return;
+		}
+
+		try {
+			Files.write(Path.of(f.getAbsolutePath() + ".bin"), cipherBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+		} catch (IOException e) {
+			showErrorMessage(e.getMessage());
+			return;
+		}
+
+		Alert finishAlert = new Alert(Alert.AlertType.INFORMATION);
+		finishAlert.setTitle("Sucesso");
+		finishAlert.setHeaderText(null);
+		finishAlert.setContentText("A encriptografia foi bem sucedida!");
+		finishAlert.show();
+	}
+	@FXML public void loadFileAndDecrypt(ActionEvent event) {
+		if (cryptoAlgorithm_ComboBox.getValue() == null)
+			return;
+
+		File f = getAnyFile();
+
+		byte[] fileBytes;
+		byte[] plainBytes;
+		byte[] decryptionKey;
+
+		try {
+			fileBytes = Files.readAllBytes(f.toPath());
+		} catch (IOException e) {
+			showErrorMessage("Erro ao ler o arquivo!");
+			return;
+		}
+
+		decryptionKey = (keyBytes != null) ? Arrays.copyOf(keyBytes, keyBytes.length) : secretKey_TextField.getText().getBytes(StandardCharsets.UTF_8);
+
+		CryptoData cryptoData = new CryptoData(fileBytes, decryptionKey);
+
+		try {
+			plainBytes = currentCryptoAlgorithm.decrypt(cryptoData, Cryptography.CryptoMode.CBC);
+		} catch (GeneralSecurityException e) {
+			showErrorMessage(e.getMessage());
+			return;
+		}
+
+		String decryptedFilePath = Path.of(f.getAbsolutePath()).toString();
+
+		if (decryptedFilePath.endsWith(".bin"))
+			decryptedFilePath = decryptedFilePath.substring(0, decryptedFilePath.length() - 4);
+
+		try {
+			Files.write(Paths.get(decryptedFilePath), plainBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+		} catch (IOException e) {
+			showErrorMessage(e.getMessage());
+			return;
+		}
+
+		Alert finishAlert = new Alert(Alert.AlertType.INFORMATION);
+		finishAlert.setTitle("Sucesso");
+		finishAlert.setHeaderText(null);
+		finishAlert.setContentText("A descriptografia foi bem sucedida!");
+		finishAlert.show();
 	}
 	@FXML
 	public void encryptText(ActionEvent event) throws UnsupportedEncodingException, IOException {
@@ -100,10 +194,7 @@ public class VisualInterfaceController {
 		byte[] encryptionKey;
 		byte[] cipherBytes;
 
-		if (keyBytes == null)
-			encryptionKey = secretKey_TextField.getText().getBytes(StandardCharsets.UTF_8);
-		else
-			encryptionKey = Arrays.copyOf(keyBytes, keyBytes.length);
+		encryptionKey = (keyBytes != null) ? Arrays.copyOf(keyBytes, keyBytes.length) : secretKey_TextField.getText().getBytes(StandardCharsets.UTF_8);
 
 		CryptoData cryptoData = new CryptoData(plainTextBytes, encryptionKey);
 
@@ -211,7 +302,11 @@ public class VisualInterfaceController {
 	public void initialize() {
 		cryptoAlgorithm_ComboBox.getItems().addAll(cryptographyMap.keySet());
 	}
-
+	public File getAnyFile() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Selecione um arquivo");
+		return fileChooser.showOpenDialog(null);
+	}
 	public void showErrorMessage(String message) {
 		System.out.println(message);
 		Alert alert = new Alert(Alert.AlertType.ERROR);
