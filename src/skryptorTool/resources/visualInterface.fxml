@@ -174,18 +174,18 @@
                                  <children>
                                     <Button fx:id="hashInput_Button" maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" text="📁">
                                        <tooltip>
-                                          <Tooltip text="Usar arquivo como chave secreta.">
+                                          <Tooltip text="Carregar informação a partir de arquivo.">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Tooltip>
                                        </tooltip>
                                     </Button>
-                                    <TextArea fx:id="hashInput_TextArea" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="736.0" />
+                                    <TextField fx:id="hashInput_TextField" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="31.0" prefWidth="736.0" promptText="Informação" />
                                  </children>
                               </HBox>
-                              <TextField fx:id="hashOutput_TextField" editable="false" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="777.0" />
-                              <Button fx:id="generateHash_Button" mnemonicParsing="false" prefHeight="29.0" prefWidth="119.0" text="Gerar Hash">
+                              <TextArea fx:id="hashOutput_TextArea" editable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="66.0" prefWidth="776.0" promptText="Hash gerado" wrapText="true" />
+                              <Button fx:id="generateHash_Button" mnemonicParsing="false" onAction="#generateHash" prefHeight="29.0" prefWidth="119.0" text="Gerar Hash">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

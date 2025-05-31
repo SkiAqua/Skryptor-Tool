@@ -60,9 +60,51 @@ public class VisualInterfaceController {
 	@FXML
 	private ComboBox<String> hashAlgorithm_ComboBox;
 
-	private ObservableList<String> hashAlgorithms = FXCollections.observableArrayList("SHA-1", "MD5", "SHA-256", "SHA-384", "SHA-512");
+	private final ObservableList<String> hashAlgorithms = FXCollections.observableArrayList("SHA-1", "MD5", "SHA-256", "SHA-384", "SHA-512");
+
+	private byte[] hashFileBytes;
+
+	@FXML
+	private TextField hashInput_TextField;
+
+	@FXML
+	private TextArea hashOutput_TextArea;
+
+	@FXML
+	private void generateHash() {
+		String selectedHashAlgorithm = hashAlgorithm_ComboBox.getSelectionModel().getSelectedItem();
+
+		byte[] hashInput;
+		byte[] hashOutput;
+
+		if (hashFileBytes.length == 0)
+			hashInput = hashInput_TextField.getText().getBytes(StandardCharsets.UTF_8);
+		else
+			hashInput = Arrays.copyOfRange(hashFileBytes, 0, hashFileBytes.length);
+
+		if (selectedHashAlgorithm == null || hashInput.length == 0) {
+			System.out.println("selectedHashAlgorithm is null or hashInput is empty");
+			return;
+		}
+
+		try {
+			hashOutput = HashAlgorithm.genericMessageDigest(hashInput, selectedHashAlgorithm);
+		} catch (NoSuchAlgorithmException e) {
+			showErrorMessage("Algorítmo de hash não existe!");
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		for (byte b : hashOutput) {
+			sb.append(String.format("%02x", b));
+		}
+
+		hashOutput_TextArea.setText(sb.toString());
+	}
 	// Authentication Tab
 
+	//
 	@FXML
 	public void loadFileAsKey(ActionEvent event) {
 		if (keyBytes != null) {
