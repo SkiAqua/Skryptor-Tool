@@ -79,9 +79,6 @@ public class VisualInterfaceController {
 			} catch (IOException e) {
 				showErrorMessage("Erro ao ler o arquivo!");
 				return;
-			} catch (NoSuchAlgorithmException e) {
-				showErrorMessage("Erro ao gerar hash!");
-				return;
 			}
 
 
