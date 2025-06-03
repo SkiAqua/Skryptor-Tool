@@ -172,7 +172,7 @@
                               <ComboBox fx:id="hashAlgorithm_ComboBox" prefWidth="150.0" promptText="Algorítmo" />
                               <HBox prefHeight="39.0" prefWidth="799.0" spacing="10.0">
                                  <children>
-                                    <Button fx:id="hashInput_Button" maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" text="📁">
+                                    <Button fx:id="hashInput_Button" maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#loadFileToGenerateHash" prefHeight="30.0" prefWidth="31.0" text="📁">
                                        <tooltip>
                                           <Tooltip text="Carregar informação a partir de arquivo.">
                                              <font>

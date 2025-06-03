@@ -71,14 +71,18 @@ public class VisualInterfaceController {
 	private TextArea hashOutput_TextArea;
 
 	@FXML
+	private Button hashInput_Button;
+
+	@FXML
 	private void generateHash() {
 		String selectedHashAlgorithm = hashAlgorithm_ComboBox.getSelectionModel().getSelectedItem();
 
 		byte[] hashInput;
 		byte[] hashOutput;
 
-		if (hashFileBytes.length == 0)
-			hashInput = hashInput_TextField.getText().getBytes(StandardCharsets.UTF_8);
+
+		if (hashFileBytes == null)
+			hashInput = hashInput_TextField.getText().getBytes();
 		else
 			hashInput = Arrays.copyOfRange(hashFileBytes, 0, hashFileBytes.length);
 
@@ -101,6 +105,35 @@ public class VisualInterfaceController {
 		}
 
 		hashOutput_TextArea.setText(sb.toString());
+	}
+	@FXML
+	private void loadFileToGenerateHash() {
+		if (hashFileBytes != null) {
+			hashFileBytes = null;
+			hashInput_Button.setText("\uD83D\uDCC1");
+			hashInput_TextField.setText("");
+			hashInput_TextField.setDisable(false);
+			return;
+		}
+		String selectedHashAlgorithm = hashAlgorithm_ComboBox.getSelectionModel().getSelectedItem();
+
+		File hashFile = getAnyFile();
+
+		if (hashFile == null)
+			return;
+
+		try {
+			hashFileBytes = HashAlgorithm.genericMessageDigest(Files.readAllBytes(hashFile.toPath()), selectedHashAlgorithm);
+		} catch(IOException | NoSuchAlgorithmException e) {
+			showErrorMessage("Não foi possível abrir o arquivo.");
+			hashFileBytes = null;
+			return;
+		}
+
+		hashInput_Button.setText("❌");
+		hashInput_TextField.setText(hashFile.getAbsolutePath());
+		hashInput_TextField.setDisable(true);
+
 	}
 	// Authentication Tab
 
