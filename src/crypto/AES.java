@@ -17,7 +17,7 @@ public class AES implements Cryptography {
             case ECB:
                 try {
                     encryptCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-                    encryptCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cryptoData.cryptoKey, "AES"));
+                    encryptCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cryptoData.getKey(), "AES"));
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
                 }
@@ -26,7 +26,7 @@ public class AES implements Cryptography {
                 try {
                     encryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
                     iv = cryptoData.Iv;
-                    encryptCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cryptoData.cryptoKey, "AES"), iv);
+                    encryptCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cryptoData.getKey(), "AES"), iv);
                 } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
                     throw new RuntimeException(e);
                 }
@@ -47,7 +47,7 @@ public class AES implements Cryptography {
             case CryptoMode.ECB:
                 try {
                     decryptCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-                    decryptCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(cryptoData.cryptoKey, "AES"));
+                    decryptCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(cryptoData.getKey(), "AES"));
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
                 }
@@ -56,7 +56,7 @@ public class AES implements Cryptography {
                 try {
                     decryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
                     iv = cryptoData.Iv;
-                    decryptCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(cryptoData.cryptoKey, "AES"), iv);
+                    decryptCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(cryptoData.getKey(), "AES"), iv);
                 } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
                     throw new RuntimeException(e);
                 }

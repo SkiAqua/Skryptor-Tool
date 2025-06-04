@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
@@ -23,6 +24,7 @@ import javax.crypto.IllegalBlockSizeException;
 import java.io.File;
 import crypto.*;
 
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 
 public class VisualInterfaceController {
@@ -38,6 +40,7 @@ public class VisualInterfaceController {
 	private Cryptography currentCryptoAlgorithm;
 
 	private final Cryptography.CryptoMode defaultCryptoMode = Cryptography.CryptoMode.CBC;
+	private boolean forcePadding = true;
 
 	@FXML
 	private ComboBox<String> cryptoAlgorithm_ComboBox;
@@ -45,6 +48,8 @@ public class VisualInterfaceController {
 	private Button loadFileKey_Button;
 	@FXML
 	private Button genRandomKey_Button;
+	@FXML
+	private CheckBox forceHash_CheckBox;
 	@FXML
 	private TextField secretKey_TextField;
 	@FXML
@@ -144,8 +149,10 @@ public class VisualInterfaceController {
 			keyBytes = null;
 			loadFileKey_Button.setText("\uD83D\uDCC1");
 			secretKey_TextField.setText("");
+			forceHash_CheckBox.setSelected(false);
 			secretKey_TextField.setDisable(false);
 			genRandomKey_Button.setDisable(false);
+			forceHash_CheckBox.setDisable(false);
 		} else {
 
 			File f = getAnyFile();
@@ -159,19 +166,23 @@ public class VisualInterfaceController {
 			} catch (IOException e) {
 				showErrorMessage("Erro ao ler o arquivo!");
 				return;
+			} catch (OutOfMemoryError e) {
+				showErrorMessage("Esse arquivo é muito grande!");
+				return;
 			}
 
 
 			secretKey_TextField.setText(f.getAbsolutePath());
-
+			forceHash_CheckBox.setSelected(true);
 			loadFileKey_Button.setText("❌");
 			secretKey_TextField.setDisable(true);
 			genRandomKey_Button.setDisable(true);
+			forceHash_CheckBox.setDisable(true);
 		}
 	}
 	@FXML
 	public void loadFileAndEncrypt(ActionEvent event) {
-		if (cryptoAlgorithm_ComboBox.getValue() == null)
+		if (cryptoAlgorithm_ComboBox.getValue() == null || secretKey_TextField.getText().isEmpty())
 			return;
 
 		File f = getAnyFile();
@@ -183,16 +194,24 @@ public class VisualInterfaceController {
 		byte[] cipherBytes;
 		byte[] encryptionKey;
 
-		encryptionKey = (keyBytes != null) ? Arrays.copyOf(keyBytes, keyBytes.length) : secretKey_TextField.getText().getBytes(StandardCharsets.UTF_8);
+		encryptionKey = (keyBytes != null)
+				? Arrays.copyOf(keyBytes, keyBytes.length)
+				: secretKey_TextField.getText().getBytes(StandardCharsets.UTF_8);
 
 		try {
 			fileBytes = Files.readAllBytes(f.toPath());
 		} catch (IOException e) {
 			showErrorMessage("Erro ao ler o arquivo!");
 			return;
+		} catch (OutOfMemoryError e) {
+			showErrorMessage("Esse arquivo é muito grande!");
+			return;
 		}
 
 		CryptoData cryptoData = new CryptoData(fileBytes, encryptionKey);
+
+		if (forceHash_CheckBox.isSelected())
+			cryptoData.setPadding(currentCryptoAlgorithm.getKeySize()/8);
 
 		try {
 			cipherBytes = currentCryptoAlgorithm.encrypt(cryptoData, Cryptography.CryptoMode.CBC);
@@ -215,7 +234,7 @@ public class VisualInterfaceController {
 		finishAlert.show();
 	}
 	@FXML public void loadFileAndDecrypt(ActionEvent event) {
-		if (cryptoAlgorithm_ComboBox.getValue() == null)
+		if (cryptoAlgorithm_ComboBox.getValue() == null || secretKey_TextField.getText().isEmpty())
 			return;
 
 		File f = getAnyFile();
@@ -229,11 +248,17 @@ public class VisualInterfaceController {
 		} catch (IOException e) {
 			showErrorMessage("Erro ao ler o arquivo!");
 			return;
+		} catch (OutOfMemoryError e) {
+			showErrorMessage("Esse arquivo é muito grande!");
+			return;
 		}
 
 		decryptionKey = (keyBytes != null) ? Arrays.copyOf(keyBytes, keyBytes.length) : secretKey_TextField.getText().getBytes(StandardCharsets.UTF_8);
 
 		CryptoData cryptoData = new CryptoData(fileBytes, decryptionKey);
+
+		if (forceHash_CheckBox.isSelected())
+			cryptoData.setPadding(currentCryptoAlgorithm.getKeySize()/8);
 
 		try {
 			plainBytes = currentCryptoAlgorithm.decrypt(cryptoData, Cryptography.CryptoMode.CBC);
@@ -275,6 +300,10 @@ public class VisualInterfaceController {
 
 		CryptoData cryptoData = new CryptoData(plainTextBytes, encryptionKey);
 
+		System.out.println(currentCryptoAlgorithm.getKeySize()/8);
+		if (forceHash_CheckBox.isSelected())
+			cryptoData.setPadding(currentCryptoAlgorithm.getKeySize()/8);
+
 		// Check if the data is null
 		if (plainTextBytes.length == 0 || encryptionKey.length == 0) {
 			return;
@@ -283,8 +312,11 @@ public class VisualInterfaceController {
 		// Encryption
 		try {
 			cipherBytes = currentCryptoAlgorithm.encrypt(cryptoData, Cryptography.CryptoMode.CBC);
+		} catch (InvalidKeyException e) {
+			showErrorMessage("Chave inválida, considere forçar o hash.");
+			return;
 		} catch (GeneralSecurityException e) {
-			showErrorMessage(e.getMessage());
+			showErrorMessage(e);
 			return;
 		}
 
@@ -325,8 +357,13 @@ public class VisualInterfaceController {
 			return;
 		}
 
+		CryptoData cryptoData = new CryptoData(cipherBytes, decryptionKey, ivParameter);
+
+		if (forceHash_CheckBox.isSelected())
+			cryptoData.setPadding(currentCryptoAlgorithm.getKeySize()/8);
+
 		try {
-			plainBytes = currentCryptoAlgorithm.decrypt(new CryptoData(cipherBytes, decryptionKey,ivParameter), Cryptography.CryptoMode.CBC);
+			plainBytes = currentCryptoAlgorithm.decrypt(cryptoData, Cryptography.CryptoMode.CBC);
 		} catch (IllegalBlockSizeException e) {
 			showErrorMessage("Texto cifrado inválido.");
 			return;
@@ -391,5 +428,11 @@ public class VisualInterfaceController {
 		alert.setTitle("Erro!");
 		alert.setContentText(message);
 		alert.showAndWait();
+	}
+
+	public void showErrorMessage(Exception e) {
+		String errorMessage = String.format("%s: %s", e.getClass().getSimpleName(), e.getMessage());
+		System.out.println(errorMessage);
+		showErrorMessage(errorMessage);
 	}
 }

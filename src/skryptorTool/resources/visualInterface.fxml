@@ -92,7 +92,7 @@
                                     <Insets top="10.0" />
                                  </padding>
                               </HBox>
-                              <CheckBox fx:id="forceHash_CheckBox" mnemonicParsing="false" prefHeight="17.0" prefWidth="125.0" text="Forçar padding" />
+                              <CheckBox fx:id="forceHash_CheckBox" mnemonicParsing="false" prefHeight="17.0" prefWidth="125.0" text="Forçar hash" />
                            </children>
                         </VBox>
                         <HBox alignment="CENTER" layoutX="-6.0" layoutY="131.0" prefHeight="405.0" prefWidth="835.0" spacing="12.0">
