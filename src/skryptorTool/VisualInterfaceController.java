@@ -220,8 +220,19 @@ public class VisualInterfaceController {
 			return;
 		}
 
+		ByteArrayOutputStream ivPlusCipherBytes;
+
 		try {
-			Files.write(Path.of(f.getAbsolutePath() + ".bin"), cipherBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+			// Concatenate Inicialization Vector with the CipherText
+			ivPlusCipherBytes = new ByteArrayOutputStream();
+			ivPlusCipherBytes.write(cryptoData.Iv.getIV());
+			ivPlusCipherBytes.write(cipherBytes);
+		} catch (IOException e) {
+			showErrorMessage("Erro ao escrever o arquivo!");
+			return;
+		}
+		try {
+			Files.write(Path.of(f.getAbsolutePath() + ".bin"), ivPlusCipherBytes.toByteArray(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 		} catch (IOException e) {
 			showErrorMessage(e.getMessage());
 			return;
@@ -253,9 +264,21 @@ public class VisualInterfaceController {
 			return;
 		}
 
-		decryptionKey = (keyBytes != null) ? Arrays.copyOf(keyBytes, keyBytes.length) : secretKey_TextField.getText().getBytes(StandardCharsets.UTF_8);
+		if (fileBytes.length <= 16) {
+			showErrorMessage("Arquivo cifrado inválido.");
+			return;
+		}
 
-		CryptoData cryptoData = new CryptoData(fileBytes, decryptionKey);
+		byte[] cipherBytes = Arrays.copyOfRange(fileBytes, 16, fileBytes.length);
+		byte[] ivBytes = Arrays.copyOfRange(fileBytes, 0,16);
+
+		IvParameterSpec ivParameter = new IvParameterSpec(ivBytes);
+
+		decryptionKey = (keyBytes != null)
+				? Arrays.copyOf(keyBytes, keyBytes.length)
+				: secretKey_TextField.getText().getBytes(StandardCharsets.UTF_8);
+
+		CryptoData cryptoData = new CryptoData(cipherBytes, decryptionKey, ivParameter);
 
 		if (forceHash_CheckBox.isSelected())
 			cryptoData.setPadding(currentCryptoAlgorithm.getKeySize()/8);
