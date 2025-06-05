@@ -28,6 +28,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 
 public class VisualInterfaceController {
+	private static final Cryptography.CryptoMode DEFAULT_CRYPTO_MODE = Cryptography.CryptoMode.CBC;
+
 	// Crypto Tab
 
 	private byte[] keyBytes;
@@ -39,7 +41,6 @@ public class VisualInterfaceController {
 	);
 	private Cryptography currentCryptoAlgorithm;
 
-	private final Cryptography.CryptoMode defaultCryptoMode = Cryptography.CryptoMode.CBC;
 	private boolean forcePadding = true;
 
 	@FXML
@@ -214,7 +215,7 @@ public class VisualInterfaceController {
 			cryptoData.setPadding(currentCryptoAlgorithm.getKeySize()/8);
 
 		try {
-			cipherBytes = currentCryptoAlgorithm.encrypt(cryptoData, Cryptography.CryptoMode.CBC);
+			cipherBytes = currentCryptoAlgorithm.encrypt(cryptoData, DEFAULT_CRYPTO_MODE);
 		} catch (GeneralSecurityException e) {
 			showErrorMessage(e.getMessage());
 			return;
@@ -284,7 +285,7 @@ public class VisualInterfaceController {
 			cryptoData.setPadding(currentCryptoAlgorithm.getKeySize()/8);
 
 		try {
-			plainBytes = currentCryptoAlgorithm.decrypt(cryptoData, Cryptography.CryptoMode.CBC);
+			plainBytes = currentCryptoAlgorithm.decrypt(cryptoData, DEFAULT_CRYPTO_MODE);
 		} catch (GeneralSecurityException e) {
 			showErrorMessage(e.getMessage());
 			return;
@@ -323,7 +324,6 @@ public class VisualInterfaceController {
 
 		CryptoData cryptoData = new CryptoData(plainTextBytes, encryptionKey);
 
-		System.out.println(currentCryptoAlgorithm.getKeySize()/8);
 		if (forceHash_CheckBox.isSelected())
 			cryptoData.setPadding(currentCryptoAlgorithm.getKeySize()/8);
 
@@ -334,9 +334,10 @@ public class VisualInterfaceController {
 
 		// Encryption
 		try {
-			cipherBytes = currentCryptoAlgorithm.encrypt(cryptoData, Cryptography.CryptoMode.CBC);
+			cipherBytes = currentCryptoAlgorithm.encrypt(cryptoData, DEFAULT_CRYPTO_MODE);
 		} catch (InvalidKeyException e) {
 			showErrorMessage("Chave inválida, considere forçar o hash.");
+			System.out.println(e.getMessage());
 			return;
 		} catch (GeneralSecurityException e) {
 			showErrorMessage(e);
@@ -386,7 +387,7 @@ public class VisualInterfaceController {
 			cryptoData.setPadding(currentCryptoAlgorithm.getKeySize()/8);
 
 		try {
-			plainBytes = currentCryptoAlgorithm.decrypt(cryptoData, Cryptography.CryptoMode.CBC);
+			plainBytes = currentCryptoAlgorithm.decrypt(cryptoData, DEFAULT_CRYPTO_MODE);
 		} catch (IllegalBlockSizeException e) {
 			showErrorMessage("Texto cifrado inválido.");
 			return;
