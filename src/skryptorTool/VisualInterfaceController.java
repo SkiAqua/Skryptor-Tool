@@ -4,11 +4,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.event.ActionEvent;
 import javafx.stage.FileChooser;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,7 +22,6 @@ import javax.crypto.IllegalBlockSizeException;
 import java.io.File;
 import crypto.*;
 
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 
 public class VisualInterfaceController {
@@ -40,8 +37,6 @@ public class VisualInterfaceController {
 			Map.entry("DES", new DES())
 	);
 	private Cryptography currentCryptoAlgorithm;
-
-	private boolean forcePadding = true;
 
 	@FXML
 	private ComboBox<String> cryptoAlgorithm_ComboBox;
@@ -145,7 +140,7 @@ public class VisualInterfaceController {
 
 	//
 	@FXML
-	public void loadFileAsKey(ActionEvent event) {
+	public void loadFileAsKey() {
 		if (keyBytes != null) {
 			keyBytes = null;
 			loadFileKey_Button.setText("\uD83D\uDCC1");
@@ -182,7 +177,7 @@ public class VisualInterfaceController {
 		}
 	}
 	@FXML
-	public void loadFileAndEncrypt(ActionEvent event) {
+	public void loadFileAndEncrypt() {
 		if (cryptoAlgorithm_ComboBox.getValue() == null || secretKey_TextField.getText().isEmpty())
 			return;
 
@@ -245,7 +240,7 @@ public class VisualInterfaceController {
 		finishAlert.setContentText("A encriptografia foi bem sucedida!");
 		finishAlert.show();
 	}
-	@FXML public void loadFileAndDecrypt(ActionEvent event) {
+	@FXML public void loadFileAndDecrypt() {
 		if (cryptoAlgorithm_ComboBox.getValue() == null || secretKey_TextField.getText().isEmpty())
 			return;
 
@@ -310,7 +305,7 @@ public class VisualInterfaceController {
 		finishAlert.show();
 	}
 	@FXML
-	public void encryptText(ActionEvent event) throws UnsupportedEncodingException, IOException {
+	public void encryptText() throws IOException {
 		// Check if the encryption algorithm is not null
 		if (cryptoAlgorithm_ComboBox.getValue() == null)
 				return;
@@ -320,7 +315,9 @@ public class VisualInterfaceController {
 		byte[] encryptionKey;
 		byte[] cipherBytes;
 
-		encryptionKey = (keyBytes != null) ? Arrays.copyOf(keyBytes, keyBytes.length) : secretKey_TextField.getText().getBytes(StandardCharsets.UTF_8);
+		encryptionKey = (keyBytes != null)
+				? Arrays.copyOf(keyBytes, keyBytes.length)
+				: secretKey_TextField.getText().getBytes(StandardCharsets.UTF_8);
 
 		CryptoData cryptoData = new CryptoData(plainTextBytes, encryptionKey);
 
@@ -354,8 +351,8 @@ public class VisualInterfaceController {
 	}
 
 	@FXML
-	public void decryptText(ActionEvent event) {
-		// Verifica se o usuário escolheu um algorítmo de criptografia.
+	public void decryptText() {
+		// Verify if there is any cryptography algorithm
 		if (cryptoAlgorithm_ComboBox.getValue() == null)
 			return;
 
@@ -399,7 +396,7 @@ public class VisualInterfaceController {
 		plainText_TextArea.setText(new String(plainBytes, StandardCharsets.UTF_8));
 	}
 	@FXML
-	public void generateRandomKey(ActionEvent event) {
+	public void generateRandomKey() {
 		if (currentCryptoAlgorithm == null)
 			return;
 
@@ -426,11 +423,11 @@ public class VisualInterfaceController {
 		cipherText_TextArea.setText(plainText);
 	}
 	@FXML
-	public void updateCurrentCryptographyAlgorithm(ActionEvent event) {
+	public void updateCurrentCryptographyAlgorithm() {
 		currentCryptoAlgorithm = cryptographyMap.get(cryptoAlgorithm_ComboBox.getValue());
 	}
 	@FXML
-	public void showInformationMessage(ActionEvent event) {
+	public void showInformationMessage() {
 		Alert infoAlert = new Alert(Alert.AlertType.INFORMATION);
 		infoAlert.setTitle("Criptografia de texto.");
 		infoAlert.setHeaderText(null);

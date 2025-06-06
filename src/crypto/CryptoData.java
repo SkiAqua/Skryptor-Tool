@@ -1,7 +1,6 @@
 package crypto;
 
 import javax.crypto.spec.IvParameterSpec;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
@@ -29,6 +28,7 @@ public class CryptoData {
         }
 
         byte[] shaDigest = HashAlgorithm.sha256(cryptoKey);
+
         return Arrays.copyOf(shaDigest, paddingSize);
     }
     public void setPadding(int paddingValue) {
