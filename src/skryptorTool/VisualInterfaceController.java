@@ -48,12 +48,10 @@ public class VisualInterfaceController {
 	private CheckBox forceHash_CheckBox;
 	@FXML
 	private TextField secretKey_TextField;
-	@FXML
-	private Button loadFileToEncrypt_Button;
+
 	@FXML
 	private TextArea plainText_TextArea;
-	@FXML
-	private Button loadFileToDecrypt_Button;
+
 	@FXML
 	private TextArea cipherText_TextArea;
 
